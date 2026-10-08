@@ -1,6 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import LeafIcon from "../icons/LeafIcon";
+import QuoteSection from "./QuoteSection";
+import ScrollReveal from "../ScrollReveal";
 
 // Container variant untuk stagger reveal anak-anaknya (~120ms per elemen/baris)
 const containerVariants = {
@@ -14,47 +16,9 @@ const containerVariants = {
   },
 };
 
-// Baris teks Paragraf 1 untuk reveal bertahap per baris
-const PARA_1_LINES = [
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-  "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-  "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.",
-  "Orastrix memadukan kitosan alami berkualitas tinggi dengan formula larut cepat",
-  "untuk menjaga kesehatan rongga mulut secara menyeluruh kapan pun Anda membutuhkannya.",
-];
-
-// Baris teks Paragraf 2 untuk reveal bertahap per baris
-const PARA_2_LINES = [
-  
-];
-
-// Container variant untuk stagger reveal baris-baris teks (~125ms antar baris)
-const paragraphVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.125, // 125ms stagger antar baris (sesuai instruksi 100-150ms)
-      delayChildren: 0.05,
-    },
-  },
-};
-
-// Item variant per baris: fade in + slide up dengan clipping overflow
-const lineVariants = {
-  hidden: {
-    opacity: 0,
-    y: 28,
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.7,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  },
-};
+// Teks paragraf (lorem ipsum) — dianimasikan oleh ScrollReveal (scrub mengikuti scroll)
+const ABOUT_PARAGRAPH =
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip. Orastrix memadukan kitosan alami berkualitas tinggi dengan formula larut cepat untuk menjaga kesehatan rongga mulut secara menyeluruh kapan pun Anda membutuhkannya.";
 
 // Item variant untuk fade in + slide up yang halus dengan cubic bezier
 const itemVariants = {
@@ -84,7 +48,7 @@ export default function AboutSection() {
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: false, amount: 0.25 }}
+          viewport={{ once: true, amount: "some" }}
           className="flex flex-col gap-6 md:gap-8"
         >
           {/* Eyebrow Label Kecil "ABOUT" */}
@@ -107,39 +71,19 @@ export default function AboutSection() {
             </h2>
           </motion.div>
 
-          {/* Paragraf 1 Lorem Ipsum (Reveal bertahap per baris: fade + slide-up, stagger ~125ms) */}
-          <motion.div
-            variants={paragraphVariants}
-            className="flex flex-col gap-1.5 max-w-3xl"
+          {/* Paragraf Lorem Ipsum — animasi ScrollReveal (React Bits): kata-kata
+              menyala + blur hilang bertahap mengikuti scroll */}
+          <ScrollReveal
+            baseOpacity={0.1}
+            enableBlur={true}
+            baseRotation={3}
+            blurStrength={4}
+            wordAnimationEnd="bottom center"
+            containerClassName="max-w-3xl text-[#4B5563]"
+            textClassName="scroll-reveal-text--body"
           >
-            {PARA_1_LINES.map((line, idx) => (
-              <span key={idx} className="block overflow-hidden">
-                <motion.span
-                  variants={lineVariants}
-                  className="block text-base sm:text-lg md:text-xl text-[#4B5563] leading-relaxed font-normal"
-                >
-                  {line}
-                </motion.span>
-              </span>
-            ))}
-          </motion.div>
-
-          {/* Paragraf 2 Lorem Ipsum (Reveal bertahap per baris: fade + slide-up, stagger ~125ms) */}
-          <motion.div
-            variants={paragraphVariants}
-            className="flex flex-col gap-1.5 max-w-3xl"
-          >
-            {PARA_2_LINES.map((line, idx) => (
-              <span key={idx} className="block overflow-hidden">
-                <motion.span
-                  variants={lineVariants}
-                  className="block text-sm sm:text-base md:text-lg text-[#6B7280] leading-relaxed"
-                >
-                  {line}
-                </motion.span>
-              </span>
-            ))}
-          </motion.div>
+            {ABOUT_PARAGRAPH}
+          </ScrollReveal>
 
           {/* 3 Pilar Kartu Pendukung bernuansa minimalis */}
           <motion.div
@@ -176,6 +120,9 @@ export default function AboutSection() {
               </p>
             </div>
           </motion.div>
+
+          {/* Section Tambahan: Quote Banner Persis Referensi Gambar */}
+          <QuoteSection />
         </motion.div>
       </div>
     </div>
