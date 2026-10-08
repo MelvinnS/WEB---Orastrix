@@ -8,7 +8,11 @@ import { useState } from "react";
 export default function useActivePanel(initialIndex = 0) {
   const [activeIndex, setActiveIndex] = useState(initialIndex);
 
-  const activate = (index) => setActiveIndex(index);
+  const activate = (index) => {
+    setActiveIndex(index);
+  };
 
-  return { activeIndex, activate };
+  const setExplicit = (index) => setActiveIndex(index);
+
+  return { activeIndex, activate, setExplicit };
 }

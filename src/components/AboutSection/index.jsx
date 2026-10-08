@@ -14,6 +14,48 @@ const containerVariants = {
   },
 };
 
+// Baris teks Paragraf 1 untuk reveal bertahap per baris
+const PARA_1_LINES = [
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.",
+  "Orastrix memadukan kitosan alami berkualitas tinggi dengan formula larut cepat",
+  "untuk menjaga kesehatan rongga mulut secara menyeluruh kapan pun Anda membutuhkannya.",
+];
+
+// Baris teks Paragraf 2 untuk reveal bertahap per baris
+const PARA_2_LINES = [
+  
+];
+
+// Container variant untuk stagger reveal baris-baris teks (~125ms antar baris)
+const paragraphVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.125, // 125ms stagger antar baris (sesuai instruksi 100-150ms)
+      delayChildren: 0.05,
+    },
+  },
+};
+
+// Item variant per baris: fade in + slide up dengan clipping overflow
+const lineVariants = {
+  hidden: {
+    opacity: 0,
+    y: 28,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.7,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
 // Item variant untuk fade in + slide up yang halus dengan cubic bezier
 const itemVariants = {
   hidden: {
@@ -65,27 +107,38 @@ export default function AboutSection() {
             </h2>
           </motion.div>
 
-          {/* Paragraf 1 Lorem Ipsum (Slide up bertahap) */}
-          <motion.div variants={itemVariants}>
-            <p className="text-base sm:text-lg md:text-xl text-[#4B5563] leading-relaxed max-w-3xl font-normal">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-              ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-              aliquip ex ea commodo consequat. Orastrix memadukan kitosan alami
-              berkualitas tinggi dengan formula larut cepat untuk menjaga kesehatan
-              rongga mulut secara menyeluruh kapan pun Anda membutuhkannya.
-            </p>
+          {/* Paragraf 1 Lorem Ipsum (Reveal bertahap per baris: fade + slide-up, stagger ~125ms) */}
+          <motion.div
+            variants={paragraphVariants}
+            className="flex flex-col gap-1.5 max-w-3xl"
+          >
+            {PARA_1_LINES.map((line, idx) => (
+              <span key={idx} className="block overflow-hidden">
+                <motion.span
+                  variants={lineVariants}
+                  className="block text-base sm:text-lg md:text-xl text-[#4B5563] leading-relaxed font-normal"
+                >
+                  {line}
+                </motion.span>
+              </span>
+            ))}
           </motion.div>
 
-          {/* Paragraf 2 Lorem Ipsum (Slide up bertahap) */}
-          <motion.div variants={itemVariants}>
-            <p className="text-sm sm:text-base md:text-lg text-[#6B7280] leading-relaxed max-w-3xl">
-              Duis aute irure dolor in reprehenderit in voluptate velit esse
-              cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-              cupidatat non proident, sunt in culpa qui officia deserunt mollit
-              anim id est laborum. Kemasan kaleng saku yang kokoh dan dapat diisi
-              ulang menjadikannya sahabat terbaik gaya hidup aktif Anda.
-            </p>
+          {/* Paragraf 2 Lorem Ipsum (Reveal bertahap per baris: fade + slide-up, stagger ~125ms) */}
+          <motion.div
+            variants={paragraphVariants}
+            className="flex flex-col gap-1.5 max-w-3xl"
+          >
+            {PARA_2_LINES.map((line, idx) => (
+              <span key={idx} className="block overflow-hidden">
+                <motion.span
+                  variants={lineVariants}
+                  className="block text-sm sm:text-base md:text-lg text-[#6B7280] leading-relaxed"
+                >
+                  {line}
+                </motion.span>
+              </span>
+            ))}
           </motion.div>
 
           {/* 3 Pilar Kartu Pendukung bernuansa minimalis */}
