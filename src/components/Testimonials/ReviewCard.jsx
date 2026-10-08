@@ -3,7 +3,7 @@ import StarRating from "./StarRating";
 
 const AVATAR_COLORS = ["#1F4336", "#6E8FB3", "#7A2142", "#B45309", "#4B5563"];
 
-const colorFor = (name) => {
+export const colorFor = (name) => {
   let h = 0;
   for (const c of name) h = (h * 31 + c.charCodeAt(0)) % 997;
   return AVATAR_COLORS[h % AVATAR_COLORS.length];
@@ -13,8 +13,8 @@ export default function ReviewCard({ review, compact = false, highlight = false 
   const initial = (review.name.trim()[0] || "?").toUpperCase();
   return (
     <article
-      className={`flex h-full flex-col rounded-2xl bg-white p-6 border shadow-[0_8px_30px_rgba(17,24,39,0.08)] transition-shadow hover:shadow-[0_14px_40px_rgba(17,24,39,0.12)] ${
-        highlight ? "border-[#1F4336]/40 ring-2 ring-[#1F4336]/10" : "border-black/5"
+      className={`flex h-full flex-col rounded-2xl bg-white p-6 border-2 border-[#121417] shadow-[4px_8px_0_0_#121417] ${
+        highlight ? "ring-4 ring-[#1F4336]/25" : ""
       }`}
     >
       <StarRating value={review.rating} size="w-5 h-5" />

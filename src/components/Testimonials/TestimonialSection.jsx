@@ -2,17 +2,21 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import LeafIcon from "../icons/LeafIcon";
-import ReviewCard from "./ReviewCard";
-import { getFeaturedReviews } from "../../lib/reviewStore";
+import ReviewCard, { colorFor } from "./ReviewCard";
+import { getFeaturedReviews, getReviews } from "../../lib/reviewStore";
 
 const ease = [0.22, 1, 0.36, 1];
 
 /** Testimoni di beranda: 3 review pilihan admin + tombol ke halaman review. */
 export default function TestimonialSection() {
   const [reviews, setReviews] = useState([]);
+  const [others, setOthers] = useState([]);
 
   useEffect(() => {
-    setReviews(getFeaturedReviews(3));
+    const shown = getFeaturedReviews(3);
+    setReviews(shown);
+    const ids = new Set(shown.map((r) => r.id));
+    setOthers(getReviews().filter((r) => !ids.has(r.id)));
   }, []);
 
   return (
@@ -51,16 +55,60 @@ export default function TestimonialSection() {
         ))}
       </div>
 
+      {others.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.8 }}
+          transition={{ duration: 0.7, ease }}
+          className="mt-12 sm:mt-14 flex justify-center"
+        >
+          <Link
+            to="/review"
+            className="group inline-flex items-center gap-4 focus:outline-none"
+            aria-label={`Lihat ${others.length} review lainnya`}
+          >
+            {/* Avatar bertumpuk yang "mengintip" dari belakang */}
+            <span className="flex items-center -space-x-3">
+              {others.slice(0, 4).map((r, i) => (
+                <span
+                  key={r.id}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-[#121417] text-xs font-bold text-white transition-transform duration-300 ease-out group-hover:translate-x-1"
+                  style={{
+                    backgroundColor: colorFor(r.name),
+                    zIndex: 10 - i,
+                    transitionDelay: `${i * 40}ms`,
+                  }}
+                  aria-hidden="true"
+                >
+                  {(r.name.trim()[0] || "?").toUpperCase()}
+                </span>
+              ))}
+            </span>
+
+            <span className="relative text-lg sm:text-xl font-extrabold tracking-tight text-[#111827]">
+              <span className="text-[#1F4336]">+{others.length}</span> Review Lainnya
+              {/* Garis bawah yang "digambar" saat hover */}
+              <span className="absolute left-0 -bottom-1 h-[3px] w-full origin-left scale-x-[0.25] rounded-full bg-[#121417] transition-transform duration-500 ease-out group-hover:scale-x-100" />
+            </span>
+
+            <span className="text-xl font-black text-[#121417] transition-transform duration-300 group-hover:translate-x-1.5">
+              →
+            </span>
+          </Link>
+        </motion.div>
+      )}
+
       <motion.div
         initial={{ opacity: 0, y: 25 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.6 }}
         transition={{ duration: 0.7, ease, delay: 0.2 }}
-        className="mt-10 sm:mt-12 flex justify-center"
+        className="mt-8 sm:mt-10 flex justify-center"
       >
         <Link
           to="/review"
-          className="inline-flex items-center gap-2 rounded-full bg-[#1F4336] px-7 py-3 text-sm font-semibold text-white shadow-lg shadow-[#1F4336]/25 transition-all duration-200 hover:bg-[#173326] hover:scale-105 active:scale-95"
+          className="inline-flex items-center gap-2 rounded-full border-2 border-[#121417] bg-[#1F4336] px-7 py-3 text-sm font-bold text-white shadow-[3px_5px_0_0_#121417] transition-all duration-150 hover:-translate-y-0.5 hover:shadow-[3px_7px_0_0_#121417] active:translate-y-1 active:shadow-[1px_1px_0_0_#121417]"
         >
           Tambahkan Review
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
