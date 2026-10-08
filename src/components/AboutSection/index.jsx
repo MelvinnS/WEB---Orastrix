@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import LeafIcon from "../icons/LeafIcon";
 import QuoteSection from "./QuoteSection";
 import ScrollReveal from "../ScrollReveal";
+import TestimonialSection from "../Testimonials/TestimonialSection";
 
 // Container variant untuk stagger reveal anak-anaknya (~120ms per elemen/baris)
 const containerVariants = {
@@ -124,6 +125,9 @@ export default function AboutSection() {
           {/* Section Tambahan: Quote Banner Persis Referensi Gambar */}
           <QuoteSection />
         </motion.div>
+
+        {/* Section Testimoni (3 review pilihan admin) */}
+        <TestimonialSection />
       </div>
     </div>
   );

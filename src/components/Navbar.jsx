@@ -206,6 +206,10 @@ export default function Navbar({ activeHref = "#home", theme = "auto" }) {
         e.preventDefault();
         scrollToTarget(elem);
         setCurrentActive(href);
+      } else {
+        // Sedang di halaman lain (mis. /review): kembali ke beranda + anchor
+        e.preventDefault();
+        window.location.href = "/" + href;
       }
     }
   };

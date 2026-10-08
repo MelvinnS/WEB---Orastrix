@@ -1,0 +1,189 @@
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import LeafIcon from "../components/icons/LeafIcon";
+import StarRating from "../components/Testimonials/StarRating";
+import ReviewCard from "../components/Testimonials/ReviewCard";
+import { addReview, getMyReview, getReviews } from "../lib/reviewStore";
+
+const LABELS = ["", "Kurang", "Cukup", "Bagus", "Sangat bagus", "Luar biasa"];
+
+export default function Review() {
+  const [reviews, setReviews] = useState([]);
+  const [mine, setMine] = useState(null);
+  const [name, setName] = useState("");
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
+  const [error, setError] = useState("");
+  const [justSent, setJustSent] = useState(false);
+
+  const refresh = () => {
+    setReviews(getReviews());
+    setMine(getMyReview());
+  };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    refresh();
+  }, []);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const res = addReview({ name, rating, comment });
+    if (!res.ok) {
+      setError(res.error);
+      return;
+    }
+    setError("");
+    setJustSent(true);
+    refresh();
+  };
+
+  const average = reviews.length
+    ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1)
+    : "0.0";
+
+  const inputCls =
+    "w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm text-[#111827] placeholder:text-black/35 shadow-sm transition focus:border-[#1F4336]/50 focus:outline-none focus:ring-4 focus:ring-[#1F4336]/10";
+
+  return (
+    <div className="relative min-h-screen w-full bg-[#F8FAF7] text-[#1F2937] flex flex-col overflow-hidden">
+      <Navbar theme="light" activeHref="" />
+
+      <div className="pointer-events-none absolute top-0 right-0 h-[500px] w-[500px] rounded-full bg-[#1F4336]/5 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-0 left-0 h-[400px] w-[400px] rounded-full bg-[#6E8FB3]/5 blur-3xl" />
+
+      <main className="relative flex-1 w-full max-w-5xl mx-auto px-6 sm:px-10 pt-28 sm:pt-32 pb-20">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#1F4336] hover:underline"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 12H5M11 6l-6 6 6 6" />
+          </svg>
+          Kembali ke beranda
+        </Link>
+
+        {/* Header */}
+        <div className="mt-8 flex flex-col gap-4">
+          <span className="inline-flex w-fit items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1F4336]/10 text-[#1F4336] text-xs font-bold tracking-[0.25em] uppercase border border-[#1F4336]/15 shadow-sm">
+            <LeafIcon className="w-3.5 h-3.5" />
+            REVIEW
+          </span>
+          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#111827] leading-[1.12]">
+            Bagikan{" "}
+            <span className="relative inline-block text-[#1F4336]">
+              pengalamanmu
+              <span className="absolute left-0 right-0 -bottom-1 h-2 bg-[#1F4336]/20 rounded-full -z-10" />
+            </span>
+          </h1>
+          <p className="max-w-xl text-sm sm:text-base text-[#6B7280]">
+            Ceritakan bagaimana Orastrix menemani harimu. Setiap orang hanya dapat
+            memberikan satu review.
+          </p>
+        </div>
+
+        {/* Form / status sudah review */}
+        <section className="mt-10 grid gap-6 md:grid-cols-5">
+          <div className="md:col-span-3 rounded-3xl bg-white p-6 sm:p-8 border border-black/5 shadow-[0_8px_30px_rgba(17,24,39,0.08)]">
+            {mine ? (
+              <div className="flex h-full flex-col items-center justify-center gap-4 py-6 text-center">
+                <span className="flex h-14 w-14 items-center justify-center rounded-full bg-[#1F4336]/10 text-[#1F4336]">
+                  <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="2.6" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </span>
+                <h2 className="text-xl font-extrabold text-[#111827]">
+                  {justSent ? "Terima kasih atas review-mu!" : "Kamu sudah memberikan review"}
+                </h2>
+                <p className="max-w-sm text-sm text-[#6B7280]">
+                  Review hanya bisa dikirim satu kali. Review-mu sudah muncul di daftar di bawah.
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="flex flex-col gap-6" noValidate>
+                <div>
+                  <label htmlFor="rv-name" className="mb-2 block text-sm font-bold text-[#111827]">
+                    Nama
+                  </label>
+                  <input
+                    id="rv-name"
+                    type="text"
+                    value={name}
+                    maxLength={40}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Nama kamu"
+                    autoComplete="name"
+                    className={inputCls}
+                  />
+                </div>
+
+                <div>
+                  <span className="mb-2 block text-sm font-bold text-[#111827]">Bintang</span>
+                  <div className="flex items-center gap-3">
+                    <StarRating value={rating} onChange={setRating} size="w-8 h-8" />
+                    <span className="text-sm font-semibold text-[#1F4336]">{LABELS[rating]}</span>
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="rv-comment" className="mb-2 block text-sm font-bold text-[#111827]">
+                    Komentar
+                  </label>
+                  <textarea
+                    id="rv-comment"
+                    value={comment}
+                    maxLength={300}
+                    rows={4}
+                    onChange={(e) => setComment(e.target.value)}
+                    placeholder="Ceritakan pengalamanmu memakai Orastrix..."
+                    className={`${inputCls} resize-none`}
+                  />
+                  <p className="mt-1 text-right text-xs text-black/40">{comment.length}/300</p>
+                </div>
+
+                {error && (
+                  <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700 border border-red-100">
+                    {error}
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  className="self-start rounded-full bg-[#1F4336] px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-[#1F4336]/25 transition-all duration-200 hover:bg-[#173326] hover:scale-105 active:scale-95"
+                >
+                  Kirim Review
+                </button>
+              </form>
+            )}
+          </div>
+
+          {/* Ringkasan rating */}
+          <aside className="md:col-span-2 rounded-3xl bg-[#121417] p-6 sm:p-8 text-white border border-white/5 shadow-2xl flex flex-col justify-center gap-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-white/50">
+              Rata-rata rating
+            </p>
+            <p className="text-6xl font-extrabold tracking-tight">{average}</p>
+            <StarRating value={Math.round(Number(average))} size="w-6 h-6" />
+            <p className="text-sm text-white/60">dari {reviews.length} review</p>
+          </aside>
+        </section>
+
+        {/* Daftar semua review */}
+        <section className="mt-14 sm:mt-20">
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#111827]">
+            Review dari pelanggan
+          </h2>
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {reviews.map((r) => (
+              <ReviewCard key={r.id} review={r} highlight={mine?.id === r.id} />
+            ))}
+          </div>
+        </section>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}
