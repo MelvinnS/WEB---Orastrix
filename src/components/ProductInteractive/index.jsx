@@ -3,6 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import lemonMintImg from "../../assets/products/lemon-mint.png";
 import berryImg from "../../assets/products/berry.png";
 import freshMintImg from "../../assets/products/fresh-mint.png";
+import tabletLemonImg from "../../assets/products/tabletlemon.png";
+import tabletBerryImg from "../../assets/products/tabletberry.png";
+import tabletFreshImg from "../../assets/products/tabletfresh.png";
 
 const VARIANTS = [
   {
@@ -14,6 +17,7 @@ const VARIANTS = [
     bgGradient:
       "radial-gradient(circle at 50% 50%, #87a9ce 0%, #57789a 48%, #2e445b 100%)",
     image: lemonMintImg || "/products/lemon-mint.png",
+    tabletImage: tabletLemonImg,
     description:
       "Segar citrus zesty berpadu mint klasik. Diformulasikan untuk mengembalikan kesegaran alami mulut dan meningkatkan rasa percaya diri seketika.",
     price: "Rp 20.000",
@@ -27,6 +31,7 @@ const VARIANTS = [
     bgGradient:
       "radial-gradient(circle at 50% 50%, #a2355e 0%, #6f1b39 48%, #3c0c1e 100%)",
     image: berryImg || "/products/berry.png",
+    tabletImage: tabletBerryImg,
     description:
       "Sentuhan rasa berry manis-asam yang lembut nan menyegarkan, menjaga napas tetap wangi tanpa sensasi menyengat yang berlebihan.",
     price: "Rp 20.000",
@@ -40,15 +45,36 @@ const VARIANTS = [
     bgGradient:
       "radial-gradient(circle at 50% 50%, #2e6653 0%, #1a3c30 48%, #0d221b 100%)",
     image: freshMintImg || "/products/fresh-mint.png",
+    tabletImage: tabletFreshImg,
     description:
       "Mint murni yang tajam dan tahan lama. Memberikan proteksi antibakteri kitosan alami serta ledakan kesegaran dingin kapan saja.",
     price: "Rp 20.000",
   },
 ];
 
+// Animation variants for the image swap
+const imageVariants = {
+  packEnter: { opacity: 0, y: -60, scale: 0.9 },
+  packAnimate: { opacity: 1, y: 0, scale: 1, rotate: -12 },
+  packExit: { opacity: 0, y: 80, scale: 0.85, rotate: -4 },
+  tabletEnter: { opacity: 0, y: -80, scale: 0.85 },
+  tabletAnimate: { opacity: 1, y: 0, scale: 1 },
+  tabletExit: { opacity: 0, y: 80, scale: 0.85 },
+};
+
 export default function ProductInteractive({ onBuy }) {
   const [activeVariantIndex, setActiveVariantIndex] = useState(0);
+  const [viewMode, setViewMode] = useState("pack"); // 'pack' | 'tablet'
   const currentVariant = VARIANTS[activeVariantIndex];
+
+  const handleVariantChange = (idx) => {
+    setActiveVariantIndex(idx);
+    setViewMode("pack"); // reset to pack on variant change
+  };
+
+  const isPack = viewMode === "pack";
+  const currentImage = isPack ? currentVariant.image : currentVariant.tabletImage;
+  const imageKey = `${currentVariant.id}-${viewMode}`;
 
   return (
     <div className="relative w-full min-h-screen overflow-hidden text-white flex flex-col justify-between select-none pt-24 sm:pt-28 md:pt-32">
@@ -106,9 +132,9 @@ export default function ProductInteractive({ onBuy }) {
           </AnimatePresence>
         </div>
 
-        {/* TENGAH: Teks Varian di ATAS + Foto Kaleng Produk di Bawahnya */}
-        <div className="relative flex-1 w-full flex flex-col items-center justify-center gap-3 sm:gap-5 z-10">
-          {/* Teks Varian (LEMON / BERRY / FRESH) tepat di ATAS foto produk */}
+        {/* TENGAH: Teks Varian di ATAS + Toggle Buttons + Foto Produk di Bawah */}
+        <div className="relative flex-1 w-full flex flex-col items-center justify-center gap-3 sm:gap-4 z-10">
+          {/* Teks Varian (LEMON / BERRY / FRESH) */}
           <div className="h-16 sm:h-20 md:h-24 flex items-center justify-center overflow-visible">
             <AnimatePresence mode="wait">
               <motion.span
@@ -124,31 +150,76 @@ export default function ProductInteractive({ onBuy }) {
             </AnimatePresence>
           </div>
 
-          {/* Gambar Kaleng Produk Orastrix — ukuran proporsional dan lebih besar */}
-          <div className="relative flex items-center justify-center pointer-events-none">
+          {/* Pack / Tablet Toggle Buttons */}
+          <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full p-1 border border-white/20">
+            <button
+              type="button"
+              onClick={() => setViewMode("pack")}
+              className={`px-5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest transition-all duration-300 cursor-pointer ${
+                isPack
+                  ? "bg-white text-[#111827] shadow-md"
+                  : "text-white/80 hover:text-white"
+              }`}
+            >
+              Pack
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode("tablet")}
+              className={`px-5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest transition-all duration-300 cursor-pointer ${
+                !isPack
+                  ? "bg-white text-[#111827] shadow-md"
+                  : "text-white/80 hover:text-white"
+              }`}
+            >
+              Tablet
+            </button>
+          </div>
+
+          {/* Gambar Produk dengan AnimatePresence untuk swap animasi */}
+          <div className="relative flex items-center justify-center" style={{ minHeight: "260px" }}>
             <AnimatePresence mode="wait">
               <motion.img
-                key={currentVariant.id}
-                src={currentVariant.image}
-                alt={`Orastrix ${currentVariant.name}`}
-                initial={{ opacity: 0, scale: 0.85, rotate: -20, y: 20 }}
-                animate={{ opacity: 1, scale: 1, rotate: -12, y: 0 }}
-                exit={{ opacity: 0, scale: 0.85, rotate: -4, y: -20 }}
-                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                className="w-[240px] sm:w-[340px] md:w-[420px] lg:w-[480px] xl:w-[520px] object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.5)] max-w-none"
+                key={imageKey}
+                src={currentImage}
+                alt={`Orastrix ${currentVariant.name} ${isPack ? "Pack" : "Tablet"}`}
+                initial={
+                  isPack
+                    ? imageVariants.packEnter
+                    : imageVariants.tabletEnter
+                }
+                animate={
+                  isPack
+                    ? imageVariants.packAnimate
+                    : imageVariants.tabletAnimate
+                }
+                exit={
+                  isPack
+                    ? imageVariants.packExit
+                    : imageVariants.tabletExit
+                }
+                transition={{
+                  duration: 0.5,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className={`object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.5)] max-w-none ${
+                  isPack
+                    ? "w-[220px] sm:w-[300px] md:w-[380px] lg:w-[440px] xl:w-[480px]"
+                    : "w-[200px] sm:w-[280px] md:w-[340px] lg:w-[380px] xl:w-[420px]"
+                }`}
                 loading="eager"
               />
             </AnimatePresence>
           </div>
         </div>
 
-        {/* KOLOM KANAN: Label "Choose Your Variant" + 3 Lingkaran Warna Saja */}
+        {/* KOLOM KANAN: Label "Choose Your Variant" + 3 Lingkaran Warna */}
         <div className="w-full lg:w-1/4 flex flex-col items-center lg:items-end gap-3 sm:gap-4 z-20">
           <span className="text-xs uppercase tracking-[0.2em] font-semibold text-white/80">
             Choose Your Variant
           </span>
 
-          {/* 3 Lingkaran Warna: Biru (Lemon Mint), Merah Marun (Berry), Hijau (Fresh Mint) */}
+          {/* 3 Lingkaran Warna */}
           <div className="flex items-center gap-3.5">
             {VARIANTS.map((v, idx) => {
               const isSelected = idx === activeVariantIndex;
@@ -156,7 +227,7 @@ export default function ProductInteractive({ onBuy }) {
                 <button
                   key={v.id}
                   type="button"
-                  onClick={() => setActiveVariantIndex(idx)}
+                  onClick={() => handleVariantChange(idx)}
                   aria-label={`Pilih varian ${v.name}`}
                   className={`relative w-9 h-9 sm:w-10 sm:h-10 rounded-full transition-all duration-300 transform cursor-pointer focus:outline-none ${
                     isSelected
