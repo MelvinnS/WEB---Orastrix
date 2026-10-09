@@ -17,10 +17,20 @@ export default function Review() {
   const [comment, setComment] = useState("");
   const [error, setError] = useState("");
   const [justSent, setJustSent] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
-  const refresh = () => {
-    setReviews(getReviews());
-    setMine(getMyReview());
+  const refresh = async () => {
+    setLoading(true);
+    try {
+      const [all, userReview] = await Promise.all([getReviews(), getMyReview()]);
+      setReviews(all);
+      setMine(userReview);
+    } catch (err) {
+      console.error("Gagal memuat data review:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -28,16 +38,23 @@ export default function Review() {
     refresh();
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = addReview({ name, rating, comment });
-    if (!res.ok) {
-      setError(res.error);
-      return;
-    }
+    setSubmitting(true);
     setError("");
-    setJustSent(true);
-    refresh();
+    try {
+      const res = await addReview({ name, rating, comment });
+      if (!res.ok) {
+        setError(res.error);
+        return;
+      }
+      setJustSent(true);
+      await refresh();
+    } catch (err) {
+      setError("Gagal mengirim review. Silakan coba lagi.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const average = reviews.length
@@ -98,11 +115,20 @@ export default function Review() {
                   {justSent ? "Terima kasih atas review-mu!" : "Kamu sudah memberikan review"}
                 </h2>
                 <p className="max-w-sm text-sm text-[#6B7280]">
-                  Review hanya bisa dikirim satu kali. Review-mu sudah muncul di daftar di bawah.
+                  Review-mu sedang ditinjau oleh admin dan akan ditampilkan setelah disetujui. Terima kasih!
                 </p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="flex flex-col gap-6" noValidate>
+                {/* Honeypot hidden input */}
+                <input
+                  type="text"
+                  name="website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  className="hidden pointer-events-none"
+                />
+
                 <div>
                   <label htmlFor="rv-name" className="mb-2 block text-sm font-bold text-[#111827]">
                     Nama
@@ -115,6 +141,7 @@ export default function Review() {
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Nama kamu"
                     autoComplete="name"
+                    disabled={submitting}
                     className={inputCls}
                   />
                 </div>
@@ -138,6 +165,7 @@ export default function Review() {
                     rows={4}
                     onChange={(e) => setComment(e.target.value)}
                     placeholder="Ceritakan pengalamanmu memakai Orastrix..."
+                    disabled={submitting}
                     className={`${inputCls} resize-none`}
                   />
                   <p className="mt-1 text-right text-xs text-black/40">{comment.length}/300</p>
@@ -151,9 +179,17 @@ export default function Review() {
 
                 <button
                   type="submit"
-                  className="self-start rounded-full bg-[#1F4336] px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-[#1F4336]/25 transition-all duration-200 hover:bg-[#173326] hover:scale-105 active:scale-95"
+                  disabled={submitting}
+                  className="self-start rounded-full bg-[#1F4336] px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-[#1F4336]/25 transition-all duration-200 hover:bg-[#173326] hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none flex items-center gap-2"
                 >
-                  Kirim Review
+                  {submitting ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Mengirim...</span>
+                    </>
+                  ) : (
+                    <span>Kirim Review</span>
+                  )}
                 </button>
               </form>
             )}
@@ -166,7 +202,7 @@ export default function Review() {
             </p>
             <p className="text-6xl font-extrabold tracking-tight">{average}</p>
             <StarRating value={Math.round(Number(average))} size="w-6 h-6" />
-            <p className="text-sm text-white/60">dari {reviews.length} review</p>
+            <p className="text-sm text-white/60">dari {reviews.length} review disetujui</p>
           </aside>
         </section>
 
@@ -175,11 +211,22 @@ export default function Review() {
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#111827]">
             Review dari pelanggan
           </h2>
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {reviews.map((r) => (
-              <ReviewCard key={r.id} review={r} highlight={mine?.id === r.id} />
-            ))}
-          </div>
+
+          {loading ? (
+            <div className="mt-8 flex justify-center py-12">
+              <div className="w-8 h-8 border-3 border-[#1F4336]/30 border-t-[#1F4336] rounded-full animate-spin" />
+            </div>
+          ) : reviews.length === 0 ? (
+            <div className="mt-8 rounded-2xl bg-white p-8 text-center border border-black/5 text-[#6B7280]">
+              Belum ada review yang disetujui. Jadilah yang pertama memberikan review!
+            </div>
+          ) : (
+            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {reviews.map((r) => (
+                <ReviewCard key={r.id} review={r} highlight={mine?.id === r.id} />
+              ))}
+            </div>
+          )}
         </section>
       </main>
 

@@ -11,12 +11,32 @@ const ease = [0.22, 1, 0.36, 1];
 export default function TestimonialSection() {
   const [reviews, setReviews] = useState([]);
   const [others, setOthers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const shown = getFeaturedReviews(3);
-    setReviews(shown);
-    const ids = new Set(shown.map((r) => r.id));
-    setOthers(getReviews().filter((r) => !ids.has(r.id)));
+    let isMounted = true;
+    async function loadData() {
+      setLoading(true);
+      try {
+        const [shown, all] = await Promise.all([
+          getFeaturedReviews(3),
+          getReviews(),
+        ]);
+        if (isMounted) {
+          setReviews(shown);
+          const ids = new Set(shown.map((r) => r.id));
+          setOthers(all.filter((r) => !ids.has(r.id)));
+        }
+      } catch (err) {
+        console.error("Gagal memuat testimoni:", err);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
+    loadData();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (
@@ -41,21 +61,27 @@ export default function TestimonialSection() {
         </h2>
       </motion.div>
 
-      <div className="mt-10 sm:mt-14 grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
-        {reviews.map((review, i) => (
-          <motion.div
-            key={review.id}
-            initial={{ opacity: 0, y: 35 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.75, ease, delay: i * 0.13 }}
-          >
-            <ReviewCard review={review} compact />
-          </motion.div>
-        ))}
-      </div>
+      {loading ? (
+        <div className="mt-14 flex justify-center items-center py-12">
+          <div className="w-8 h-8 border-3 border-[#1F4336]/30 border-t-[#1F4336] rounded-full animate-spin" />
+        </div>
+      ) : (
+        <div className="mt-10 sm:mt-14 grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
+          {reviews.map((review, i) => (
+            <motion.div
+              key={review.id}
+              initial={{ opacity: 0, y: 35 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.75, ease, delay: i * 0.13 }}
+            >
+              <ReviewCard review={review} compact />
+            </motion.div>
+          ))}
+        </div>
+      )}
 
-      {others.length > 0 && (
+      {!loading && others.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -68,7 +94,6 @@ export default function TestimonialSection() {
             className="group inline-flex items-center gap-4 focus:outline-none"
             aria-label={`Lihat ${others.length} review lainnya`}
           >
-            {/* Avatar bertumpuk yang "mengintip" dari belakang */}
             <span className="flex items-center -space-x-3">
               {others.slice(0, 4).map((r, i) => (
                 <span
@@ -88,7 +113,6 @@ export default function TestimonialSection() {
 
             <span className="relative text-lg sm:text-xl font-extrabold tracking-tight text-[#111827]">
               <span className="text-[#1F4336]">+{others.length}</span> Review Lainnya
-              {/* Garis bawah yang "digambar" saat hover */}
               <span className="absolute left-0 -bottom-1 h-[3px] w-full origin-left scale-x-[0.25] rounded-full bg-[#121417] transition-transform duration-500 ease-out group-hover:scale-x-100" />
             </span>
 

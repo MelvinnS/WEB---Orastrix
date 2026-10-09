@@ -5,18 +5,8 @@ import About from "./pages/About";
 import Product from "./pages/Product";
 import Contact from "./pages/Contact";
 import Review from "./pages/Review";
+import Admin from "./pages/Admin";
 
-/**
- * Routing utama. Kalau project-mu belum pakai React Router:
- *   npm install react-router-dom
- *
- * Kalau tim memilih single-page (semua section di satu halaman,
- * navigasi pakai anchor #about / #product / #contact), App.jsx ini
- * bisa disederhanakan jadi langsung render <Home /> saja, lalu
- * tiap section (About/Product/Contact) ditaruh sebagai <section>
- * di dalam Home.jsx. Struktur folder pages/ tetap kepakai kalau nanti
- * ingin pecah jadi halaman terpisah.
- */
 export default function App() {
   return (
     <BrowserRouter>
@@ -26,6 +16,7 @@ export default function App() {
         <Route path="/product" element={<Product />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/review" element={<Review />} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
     </BrowserRouter>
   );
