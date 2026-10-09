@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import ProductShowcase from "../components/ProductShowcase";
 import AboutSection from "../components/AboutSection";
 import ProductInteractive from "../components/ProductInteractive";
+import ContactSection from "../components/ContactSection";
 import Footer from "../components/Footer";
 import useSmoothScroll, { getLenis } from "../hooks/useSmoothScroll";
 import SplashScreen from "../components/SplashScreen/SplashScreen";
@@ -96,6 +97,14 @@ export default function Home() {
       {/* SECTION 3: PRODUCT INTERACTIVE */}
       <section id="product" className="relative z-20 w-full min-h-screen">
         <ProductInteractive onBuy={handleBuy} />
+      </section>
+
+      {/* SECTION 4: CONTACT US */}
+      <section
+        id="contact"
+        className="relative z-20 w-full bg-[#F8FAF7] py-16 sm:py-24 px-4 sm:px-6 md:px-8"
+      >
+        <ContactSection />
       </section>
 
       {/* FOOTER */}
