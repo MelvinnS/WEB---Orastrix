@@ -115,7 +115,7 @@ export default function Review() {
                   {justSent ? "Terima kasih atas review-mu!" : "Kamu sudah memberikan review"}
                 </h2>
                 <p className="max-w-sm text-sm text-[#6B7280]">
-                  Review-mu sedang ditinjau oleh admin dan akan ditampilkan setelah disetujui. Terima kasih!
+                  Review-mu sudah langsung diterbitkan dan dapat dilihat pada daftar review di bawah.
                 </p>
               </div>
             ) : (

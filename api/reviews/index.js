@@ -76,7 +76,7 @@ export default async function handler(req, res) {
       const id = `r-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
       const inserted = await sql`
         INSERT INTO reviews (id, name, rating, comment, created_at, approved, featured, device_id, ip_hash)
-        VALUES (${id}, ${cleanName}, ${numRating}, ${cleanComment}, NOW(), false, false, ${deviceId}, ${ipHash})
+        VALUES (${id}, ${cleanName}, ${numRating}, ${cleanComment}, NOW(), true, false, ${deviceId}, ${ipHash})
         RETURNING id, name, rating, comment, created_at as "createdAt", approved, featured
       `;
 
