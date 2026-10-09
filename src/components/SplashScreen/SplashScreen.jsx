@@ -1,82 +1,83 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import freshMintImg from "../../assets/products/fresh-mint.png";
 import LeafIcon from "../icons/LeafIcon";
 
-export default function SplashScreen() {
+export default function SplashScreen({ onComplete }) {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const duration = 1800; // 1.8 detik durasi animasi loading yang pas dan dinamis
+    const start = performance.now();
+
+    const update = (now) => {
+      const elapsed = now - start;
+      const t = Math.min(1, elapsed / duration);
+      // Kurva easing cubic in-out yang mulus
+      const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      const currentProgress = Math.min(100, Math.round(eased * 100));
+      setProgress(currentProgress);
+
+      if (t < 1) {
+        requestAnimationFrame(update);
+      } else {
+        // Beri jeda sangat singkat di 100% sebelum transisi selesai
+        const timer = setTimeout(() => {
+          onComplete?.();
+        }, 250);
+        return () => clearTimeout(timer);
+      }
+    };
+
+    const frameId = requestAnimationFrame(update);
+    return () => cancelAnimationFrame(frameId);
+  }, [onComplete]);
+
   return (
-    <div className="relative w-full h-full min-h-screen bg-[#0F1412] text-white flex flex-col items-center justify-center overflow-hidden select-none px-6">
-      {/* Background ambient lighting effects */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] h-[480px] sm:w-[600px] sm:h-[600px] bg-[#1F4336]/35 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute top-1/4 right-1/4 w-[300px] h-[300px] bg-[#2E6653]/25 rounded-full blur-[90px] pointer-events-none" />
-
-      {/* Decorative radar concentric circles */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
-        <div className="w-[320px] h-[320px] sm:w-[500px] sm:h-[500px] rounded-full border border-white/20 animate-[spin_40s_linear_infinite]" />
-        <div className="absolute w-[240px] h-[240px] sm:w-[380px] sm:h-[380px] rounded-full border border-dashed border-[#4ADE80]/30" />
-      </div>
-
-      <div className="relative z-10 flex flex-col items-center justify-center text-center gap-6 sm:gap-8 max-w-md mx-auto">
-        {/* Floating Product Tin: Fresh Mint with spring & subtle float */}
+    <div className="fixed inset-0 w-full h-full min-h-screen bg-white text-[#111827] flex flex-col items-center justify-center select-none z-50 px-6">
+      <div className="flex flex-col items-center justify-center text-center gap-7 max-w-sm mx-auto">
+        {/* Logo & Teks Brand ORASTRIX (Minimalis, Elegan, Bersih di atas Background Putih Polos) */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.75, y: 30, rotate: -15 }}
-          animate={{ opacity: 1, scale: 1, y: 0, rotate: -6 }}
-          transition={{
-            duration: 0.9,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-          className="relative flex items-center justify-center"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="flex flex-col items-center gap-3"
         >
-          {/* Subtle glow behind the tin */}
-          <div className="absolute w-44 h-44 rounded-full bg-[#1F4336] blur-2xl opacity-60" />
-
-          <motion.img
-            src={freshMintImg || "/products/fresh-mint.png"}
-            alt="Orastrix Fresh Mint"
-            animate={{
-              y: [0, -10, 0],
-              rotate: [-6, -4, -6],
-            }}
-            transition={{
-              repeat: Infinity,
-              duration: 3,
-              ease: "easeInOut",
-            }}
-            className="relative w-44 sm:w-56 md:w-64 object-contain drop-shadow-[0_25px_45px_rgba(0,0,0,0.65)] pointer-events-none"
-          />
-        </motion.div>
-
-        {/* Text Orastrix & Tagline */}
-        <div className="flex flex-col items-center gap-2.5">
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="flex items-center gap-2.5"
-          >
-            <LeafIcon className="w-5 h-5 sm:w-6 sm:h-6 text-[#4ADE80]" />
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-[0.28em] uppercase text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.4)]">
+          <div className="flex items-center gap-2.5">
+            <LeafIcon className="w-6 h-6 sm:w-7 sm:h-7 text-[#1F4336]" />
+            <h1 className="text-3xl sm:text-4xl font-black tracking-[0.32em] uppercase text-[#111827]">
               ORASTRIX
             </h1>
-          </motion.div>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.7 }}
-            className="text-xs sm:text-sm font-medium tracking-[0.22em] uppercase text-[#4ADE80]/90"
-          >
+          </div>
+          <p className="text-[10px] sm:text-xs font-semibold tracking-[0.25em] uppercase text-[#6B7280]">
             Portable Oral Care Tablet
-          </motion.p>
-        </div>
+          </p>
+        </motion.div>
 
-        {/* Minimal loading progress indicator */}
+        {/* Animasi Garis Loading Unik: Jalan dari 0% ke 100% */}
         <motion.div
-          initial={{ opacity: 0, width: 0 }}
-          animate={{ opacity: 1, width: "120px" }}
-          transition={{ delay: 0.4, duration: 0.8 }}
-          className="h-[2px] bg-gradient-to-r from-transparent via-[#4ADE80] to-transparent rounded-full mt-2"
-        />
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2, duration: 0.6 }}
+          className="w-56 sm:w-64 md:w-72 flex flex-col gap-3 mt-4"
+        >
+          {/* Track Garis Loading */}
+          <div className="relative w-full h-[3px] bg-black/5 rounded-full overflow-hidden">
+            {/* Garis Progress Berjalan */}
+            <div
+              className="h-full bg-[#1F4336] rounded-full transition-all duration-75 ease-out relative"
+              style={{ width: `${progress}%` }}
+            >
+              {/* Ujung titik garis loading bercahaya lembut */}
+              <div className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[#1F4336] shadow-[0_0_10px_rgba(31,67,54,0.7)]" />
+            </div>
+          </div>
+
+          {/* Indikator Persentase Angka 0% - 100% */}
+          <div className="flex items-center justify-between text-[11px] font-mono tracking-widest text-[#6B7280]">
+            <span className="uppercase text-[10px] font-semibold text-black/40">Loading</span>
+            <span className="font-bold text-[#1F4336]">{progress}%</span>
+          </div>
+        </motion.div>
       </div>
     </div>
   );

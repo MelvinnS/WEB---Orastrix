@@ -1,5 +1,5 @@
-import React, { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import React, { useRef, useState } from "react";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import Navbar from "../components/Navbar";
 import ProductShowcase from "../components/ProductShowcase";
 import AboutSection from "../components/AboutSection";
@@ -7,24 +7,13 @@ import ProductInteractive from "../components/ProductInteractive";
 import Footer from "../components/Footer";
 import useSmoothScroll from "../hooks/useSmoothScroll";
 import SplashScreen from "../components/SplashScreen/SplashScreen";
-import PixelSwap from "../components/PixelSwap/PixelSwap";
 
 export default function Home() {
   // Aktifkan smooth inertial scrolling via Lenis
   useSmoothScroll();
 
-  // State untuk transisi splash screen PixelSwap otomatis
-  const [showMain, setShowMain] = useState(false);
-  const [splashFinished, setSplashFinished] = useState(false);
-
-  useEffect(() => {
-    // Tampilkan splash screen selama 1.5 detik, kemudian otomatis trigger PixelSwap transisi ke halaman utama
-    const timer = setTimeout(() => {
-      setShowMain(true);
-    }, 1500);
-
-    return () => clearTimeout(timer);
-  }, []);
+  // State untuk splash screen loader
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleBuy = (product) => {
     console.log("Buy:", product.id);
@@ -41,8 +30,26 @@ export default function Home() {
   // Home overlay gelap halus saat scroll
   const dimOpacity = useTransform(scrollYProgress, [0, 1], [0, 0.45]);
 
-  const mainPageContent = (
+  return (
     <div className="relative w-full bg-[#F8FAF7]">
+      {/* 1. SPLASH SCREEN DENGAN ANIMASI FADE TRANSISI HALUS */}
+      <AnimatePresence>
+        {isLoading && (
+          <motion.div
+            key="splash-overlay"
+            initial={{ opacity: 1 }}
+            exit={{
+              opacity: 0,
+              transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] },
+            }}
+            className="fixed inset-0 z-50 pointer-events-auto"
+          >
+            <SplashScreen onComplete={() => setIsLoading(false)} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 2. HALAMAN UTAMA (NATIVE RENDER, SMOOTH & RESPONSIVE) */}
       {/* Global Fixed Navbar: warna berubah mengikuti tepi kartu About */}
       <Navbar />
 
@@ -79,32 +86,6 @@ export default function Home() {
       <div className="relative z-20 bg-[#F8FAF7]">
         <Footer />
       </div>
-    </div>
-  );
-
-  // Jika transisi PixelSwap telah selesai seluruhnya, render konten utama secara native tanpa wrapper PixelSwap
-  if (splashFinished) {
-    return mainPageContent;
-  }
-
-  return (
-    <div className="relative w-full h-screen overflow-hidden bg-[#0F1412]">
-      <PixelSwap
-        firstContent={<SplashScreen />}
-        secondContent={mainPageContent}
-        trigger="manual"
-        active={showMain}
-        duration={1300}
-        pixelDuration={450}
-        pixelSize={56}
-        pattern="center"
-        randomness={0.2}
-        fade={true}
-        onComplete={() => {
-          setSplashFinished(true);
-        }}
-        className="w-full h-full"
-      />
     </div>
   );
 }
