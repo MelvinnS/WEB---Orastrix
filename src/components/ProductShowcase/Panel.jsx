@@ -200,7 +200,7 @@ export default function Panel({
             {product.price}
           </span>
           <span className="text-[10px] sm:text-xs text-white/75 font-normal">
-            / tin isi 30 tablet
+            / tin isi 20 tablet
           </span>
         </div>
 
