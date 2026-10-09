@@ -27,7 +27,7 @@ export default function ContactSection() {
   const waUrl = `https://wa.me/${CONTACT_CONFIG.whatsappNumber}?text=${waEncodedMsg}`;
   const igUrl =
     CONTACT_CONFIG.instagramUrl ||
-    `https://instagram.com/${CONTACT_CONFIG.el_falskie}`;
+    `https://instagram.com/${CONTACT_CONFIG.instagramUsername}`;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -353,9 +353,9 @@ export default function ContactSection() {
               </button>
 
               {/* Kalimat kecil proteksi data */}
-              <p className="text-[11px] text-neutral-500 text-center sm:text-right">
+              {/* <p className="text-[11px] text-neutral-500 text-center sm:text-right">
                 * Data hanya dipakai untuk membalas pesan.
-              </p>
+              </p> */}
             </div>
           </form>
         )}

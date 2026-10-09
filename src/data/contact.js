@@ -10,8 +10,8 @@ export const CONTACT_CONFIG = {
   whatsappDefaultMessage: "Halo Orastrix! Saya ingin bertanya mengenai produk dan informasi lebih lanjut.",
 
   // Username akun Instagram (tanpa tanda @)
-  instagramUsername: "orastrix.id",
+  instagramUsername: "el_falskie",
 
   // URL lengkap profil Instagram
-  instagramUrl: "https://instagram.com/orastrix.id",
+  instagramUrl: "https://www.instagram.com/el_falskie/?utm_source=ig_web_button_share_sheet",
 };
