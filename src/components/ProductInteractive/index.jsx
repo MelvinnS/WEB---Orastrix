@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import lemonMintImg from "../../assets/products/lemon-mint.png";
+import berryImg from "../../assets/products/berry.png";
+import freshMintImg from "../../assets/products/fresh-mint.png";
 
 const VARIANTS = [
   {
@@ -10,7 +13,7 @@ const VARIANTS = [
     glowColor: "rgba(110, 143, 179, 0.5)",
     bgGradient:
       "radial-gradient(circle at 50% 50%, #87a9ce 0%, #57789a 48%, #2e445b 100%)",
-    image: "/src/assets/products/lemon-mint.png",
+    image: lemonMintImg || "/products/lemon-mint.png",
     description:
       "Segar citrus zesty berpadu mint klasik. Diformulasikan untuk mengembalikan kesegaran alami mulut dan meningkatkan rasa percaya diri seketika.",
     price: "Rp 39.000",
@@ -23,7 +26,7 @@ const VARIANTS = [
     glowColor: "rgba(122, 33, 66, 0.5)",
     bgGradient:
       "radial-gradient(circle at 50% 50%, #a2355e 0%, #6f1b39 48%, #3c0c1e 100%)",
-    image: "/src/assets/products/berry.png",
+    image: berryImg || "/products/berry.png",
     description:
       "Sentuhan rasa berry manis-asam yang lembut nan menyegarkan, menjaga napas tetap wangi tanpa sensasi menyengat yang berlebihan.",
     price: "Rp 39.000",
@@ -36,7 +39,7 @@ const VARIANTS = [
     glowColor: "rgba(31, 67, 54, 0.5)",
     bgGradient:
       "radial-gradient(circle at 50% 50%, #2e6653 0%, #1a3c30 48%, #0d221b 100%)",
-    image: "/src/assets/products/fresh-mint.png",
+    image: freshMintImg || "/products/fresh-mint.png",
     description:
       "Mint murni yang tajam dan tahan lama. Memberikan proteksi antibakteri kitosan alami serta ledakan kesegaran dingin kapan saja.",
     price: "Rp 39.000",

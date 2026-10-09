@@ -1,8 +1,13 @@
+import lemonMintImg from "../assets/products/lemon-mint.png";
+import berryImg from "../assets/products/berry.png";
+import freshMintImg from "../assets/products/fresh-mint.png";
+
 /**
  * Data produk Orastrix — satu sumber kebenaran yang dipakai oleh
  * ProductShowcase (landing page) maupun halaman Product nanti.
  *
- * Ganti `image` dengan path gambar aslimu di src/assets/products/.
+ * Menggunakan import Vite langsung agar di-bundle ke /assets/ saat build production,
+ * dengan fallback ke public static path.
  */
 
 export const PRODUCTS = [
@@ -15,7 +20,7 @@ export const PRODUCTS = [
       "Segar citrus dengan sentuhan mint klasik. Pilihan favorit untuk aktivitas padat sepanjang hari.",
     bg: "#6E8FB3",
     textColor: "#FFFFFF",
-    image: "/src/assets/products/lemon-mint.png",
+    image: lemonMintImg || "/products/lemon-mint.png",
   },
   {
     id: "berry",
@@ -26,7 +31,7 @@ export const PRODUCTS = [
       "Rasa berry manis-asam yang lembut, menyegarkan napas tanpa rasa menyengat.",
     bg: "#7A2142",
     textColor: "#FFFFFF",
-    image: "/src/assets/products/berry.png",
+    image: berryImg || "/products/berry.png",
   },
   {
     id: "fresh-mint",
@@ -37,6 +42,6 @@ export const PRODUCTS = [
       "Mint murni yang tajam dan tahan lama, untuk kesegaran maksimal kapan saja.",
     bg: "#1F4336",
     textColor: "#FFFFFF",
-    image: "/src/assets/products/fresh-mint.png",
+    image: freshMintImg || "/products/fresh-mint.png",
   },
 ];
