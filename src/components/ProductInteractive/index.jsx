@@ -16,7 +16,7 @@ const VARIANTS = [
     image: lemonMintImg || "/products/lemon-mint.png",
     description:
       "Segar citrus zesty berpadu mint klasik. Diformulasikan untuk mengembalikan kesegaran alami mulut dan meningkatkan rasa percaya diri seketika.",
-    price: "Rp 39.000",
+    price: "Rp 20.000",
   },
   {
     id: "berry",
@@ -29,7 +29,7 @@ const VARIANTS = [
     image: berryImg || "/products/berry.png",
     description:
       "Sentuhan rasa berry manis-asam yang lembut nan menyegarkan, menjaga napas tetap wangi tanpa sensasi menyengat yang berlebihan.",
-    price: "Rp 39.000",
+    price: "Rp 20.000",
   },
   {
     id: "fresh-mint",
@@ -42,7 +42,7 @@ const VARIANTS = [
     image: freshMintImg || "/products/fresh-mint.png",
     description:
       "Mint murni yang tajam dan tahan lama. Memberikan proteksi antibakteri kitosan alami serta ledakan kesegaran dingin kapan saja.",
-    price: "Rp 39.000",
+    price: "Rp 20.000",
   },
 ];
 
