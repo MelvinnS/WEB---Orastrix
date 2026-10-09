@@ -51,6 +51,9 @@ export default function Panel({
       aria-selected={isActive}
       tabIndex={0}
       onClick={onActivate}
+      onMouseEnter={() => {
+        if (!isMobile) onActivate();
+      }}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") onActivate();
       }}

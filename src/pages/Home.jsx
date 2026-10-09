@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Navbar from "../components/Navbar";
 import ProductShowcase from "../components/ProductShowcase";
@@ -6,10 +6,25 @@ import AboutSection from "../components/AboutSection";
 import ProductInteractive from "../components/ProductInteractive";
 import Footer from "../components/Footer";
 import useSmoothScroll from "../hooks/useSmoothScroll";
+import SplashScreen from "../components/SplashScreen/SplashScreen";
+import PixelSwap from "../components/PixelSwap/PixelSwap";
 
 export default function Home() {
   // Aktifkan smooth inertial scrolling via Lenis
   useSmoothScroll();
+
+  // State untuk transisi splash screen PixelSwap otomatis
+  const [showMain, setShowMain] = useState(false);
+  const [splashFinished, setSplashFinished] = useState(false);
+
+  useEffect(() => {
+    // Tampilkan splash screen selama 1.5 detik, kemudian otomatis trigger PixelSwap transisi ke halaman utama
+    const timer = setTimeout(() => {
+      setShowMain(true);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleBuy = (product) => {
     console.log("Buy:", product.id);
@@ -23,11 +38,10 @@ export default function Home() {
     offset: ["start start", "end end"],
   });
 
-  // Home TIDAK di-scale / di-fade / di-rounded (itu yang membuat background
-  // hijau bocor di tepi). Kesan kedalaman cukup lewat overlay gelap halus.
+  // Home overlay gelap halus saat scroll
   const dimOpacity = useTransform(scrollYProgress, [0, 1], [0, 0.45]);
 
-  return (
+  const mainPageContent = (
     <div className="relative w-full bg-[#F8FAF7]">
       {/* Global Fixed Navbar: warna berubah mengikuti tepi kartu About */}
       <Navbar />
@@ -65,6 +79,32 @@ export default function Home() {
       <div className="relative z-20 bg-[#F8FAF7]">
         <Footer />
       </div>
+    </div>
+  );
+
+  // Jika transisi PixelSwap telah selesai seluruhnya, render konten utama secara native tanpa wrapper PixelSwap
+  if (splashFinished) {
+    return mainPageContent;
+  }
+
+  return (
+    <div className="relative w-full h-screen overflow-hidden bg-[#0F1412]">
+      <PixelSwap
+        firstContent={<SplashScreen />}
+        secondContent={mainPageContent}
+        trigger="manual"
+        active={showMain}
+        duration={1300}
+        pixelDuration={450}
+        pixelSize={56}
+        pattern="center"
+        randomness={0.2}
+        fade={true}
+        onComplete={() => {
+          setSplashFinished(true);
+        }}
+        className="w-full h-full"
+      />
     </div>
   );
 }
