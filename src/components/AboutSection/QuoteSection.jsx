@@ -87,7 +87,7 @@ export default function QuoteSection() {
         >
           <span className="h-[1px] w-6 bg-white/20 hidden md:inline-block" />
           <p className="text-xs sm:text-sm font-semibold tracking-[0.25em] uppercase text-white/50">
-            — EDI, PLITURER
+            — ISAAC NEWTON
           </p>
         </motion.div>
       </motion.div>
