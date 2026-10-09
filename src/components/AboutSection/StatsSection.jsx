@@ -69,17 +69,18 @@ export default function StatsSection() {
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.3 }}
-      className="relative w-full mt-10 sm:mt-14 md:mt-16 rounded-[28px] sm:rounded-[36px] md:rounded-[44px] bg-white/90 backdrop-blur-md border border-black/5 shadow-[0_10px_40px_rgba(0,0,0,0.04)] px-6 sm:px-10 md:px-14 py-10 sm:py-12 md:py-14"
+      className="relative w-full mt-14 sm:mt-20 md:mt-24 pt-6 sm:pt-10 pb-6"
     >
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-6 text-center items-center justify-center">
+      {/* 4 Angka Presentase tanpa container box tambahan, penataan merenggang secara proporsional */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-y-10 gap-x-8 sm:gap-x-12 md:gap-x-16 lg:gap-x-24 text-center items-center justify-center max-w-6xl mx-auto">
         {STATS_DATA.map((item) => (
           <motion.div
             key={item.id}
             variants={statItemVariants}
-            className="flex flex-col items-center justify-center gap-2 sm:gap-3"
+            className="flex flex-col items-center justify-center gap-2.5 sm:gap-3.5"
           >
             {/* Angka Raksasa Bold (dengan CountUp) */}
-            <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight text-[#111827] leading-none flex items-baseline justify-center">
+            <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight text-[#111827] leading-none flex items-baseline justify-center">
               {item.prefix && <span>{item.prefix}</span>}
               <CountUp
                 from={item.from !== undefined ? item.from : 0}
@@ -92,7 +93,7 @@ export default function StatsSection() {
 
             {/* Label Kecil di Bawah Angka (Uppercase Bold Accent) */}
             <span
-              className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-[0.2em] sm:tracking-[0.25em]"
+              className="text-[11px] sm:text-xs md:text-sm font-extrabold uppercase tracking-[0.2em] sm:tracking-[0.28em]"
               style={{ color: item.labelColor }}
             >
               {item.label}
