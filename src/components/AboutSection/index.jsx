@@ -20,7 +20,7 @@ const containerVariants = {
 
 // Teks paragraf (lorem ipsum) — dianimasikan oleh ScrollReveal (scrub mengikuti scroll)
 const ABOUT_PARAGRAPH =
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip. Orastrix memadukan kitosan alami berkualitas tinggi dengan formula larut cepat untuk menjaga kesehatan rongga mulut secara menyeluruh kapan pun Anda membutuhkannya.";
+  "Napas segar sering dibutuhkan justru saat kita tak sempat berkumur. Orastrix memadukan kitosan alami dari limbah cangkang udang dengan formula larut cepat, untuk menjaga kesehatan mulut Anda kapan pun dan di mana pun.";
 
 // Item variant untuk fade in + slide up yang halus dengan cubic bezier
 const itemVariants = {
