@@ -10,12 +10,18 @@ import useSmoothScroll, { getLenis } from "../hooks/useSmoothScroll";
 import SplashScreen from "../components/SplashScreen/SplashScreen";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+const easeInOutCubic = (t) =>
+  t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
 export default function Home() {
   // Aktifkan smooth inertial scrolling via Lenis
   useSmoothScroll();
 
   // State untuk splash screen loader
   const [isLoading, setIsLoading] = useState(true);
+
+  // Varian aktif yang diteruskan ke ProductInteractive saat Buy Now diklik
+  const [interactiveVariantId, setInteractiveVariantId] = useState("lemon-mint");
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -32,8 +38,20 @@ export default function Home() {
     }, 150);
   };
 
+  // Saat tombol Buy Now ditekan di hero showcase, scroll halus ke section Product dan aktifkan varian tersebut
   const handleBuy = (product) => {
-    console.log("Buy:", product.id);
+    if (product?.id) {
+      setInteractiveVariantId(product.id);
+    }
+    const productSection = document.getElementById("product");
+    if (productSection) {
+      const lenis = getLenis();
+      if (lenis) {
+        lenis.scrollTo(productSection, { duration: 1.4, easing: easeInOutCubic });
+      } else {
+        productSection.scrollIntoView({ behavior: "smooth" });
+      }
+    }
   };
 
   const heroTrackRef = useRef(null);
@@ -96,7 +114,7 @@ export default function Home() {
 
       {/* SECTION 3: PRODUCT INTERACTIVE */}
       <section id="product" className="relative z-20 w-full min-h-screen">
-        <ProductInteractive onBuy={handleBuy} />
+        <ProductInteractive onBuy={handleBuy} selectedVariantId={interactiveVariantId} />
       </section>
 
       {/* SECTION 4: CONTACT US */}

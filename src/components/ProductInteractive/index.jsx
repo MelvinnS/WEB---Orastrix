@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import lemonMintImg from "../../assets/products/lemon-mint.png";
 import berryImg from "../../assets/products/berry.png";
@@ -62,9 +62,20 @@ const imageVariants = {
   tabletExit: { opacity: 0, y: 50, scale: 0.85, rotate: 0 },
 };
 
-export default function ProductInteractive({ onBuy }) {
+export default function ProductInteractive({ onBuy, selectedVariantId }) {
   const [activeVariantIndex, setActiveVariantIndex] = useState(0);
   const [viewMode, setViewMode] = useState("pack"); // 'pack' | 'tablet'
+
+  useEffect(() => {
+    if (selectedVariantId) {
+      const idx = VARIANTS.findIndex((v) => v.id === selectedVariantId);
+      if (idx !== -1) {
+        setActiveVariantIndex(idx);
+        setViewMode("pack");
+      }
+    }
+  }, [selectedVariantId]);
+
   const currentVariant = VARIANTS[activeVariantIndex];
 
   const handleVariantChange = (idx) => {
@@ -269,7 +280,7 @@ export default function ProductInteractive({ onBuy }) {
         <button
           type="button"
           onClick={() => onBuy?.(currentVariant)}
-          className="bg-white text-[#111827] hover:bg-white/95 text-xs sm:text-sm font-bold px-6 sm:px-7 py-2.5 sm:py-3 rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 flex items-center gap-2"
+          className="bg-white text-[#111827] hover:bg-white/95 text-xs sm:text-sm font-bold px-6 sm:px-7 py-2.5 sm:py-3 rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 flex items-center gap-2 cursor-pointer"
         >
           <span>Beli Produk Ini</span>
           <span className="text-sm">↗</span>

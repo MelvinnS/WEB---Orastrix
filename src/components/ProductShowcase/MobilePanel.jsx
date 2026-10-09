@@ -4,13 +4,11 @@ import React from "react";
  * Panel produk khusus MOBILE (< 768px).
  *
  * Aturan tinggi (semua dalam satuan panjang supaya bisa di-transition mulus):
- * - Panel tertutup  : tinggi --c (clamp berdasarkan tinggi layar)
- *                     (panel pertama + NAV_H karena tertutup navbar fixed)
- * - Panel aktif     : sisa layar = 100% - 2*--c - NAV_H
- * Total selalu = 100% tinggi layar -> tidak pernah terpotong / overflow.
+ * - Panel tertutup  : tinggi var(--c) (clamp berdasarkan tinggi layar)
+ * - Panel aktif     : sisa layar = calc(100% - 2 * var(--c))
+ * Total selalu = 100% tinggi layar -> pas memenuhi viewport, tidak pernah ada ruang kosong/celah.
  *
- * Hanya 1 panel yang terbuka. Tap panel lain -> panel itu terbuka,
- * panel sebelumnya otomatis menutup.
+ * Area konten panel pertama diberi padding-top secukupnya agar tidak tertutup oleh navbar fixed.
  */
 export const NAV_H = "64px"; // tinggi area navbar fixed di mobile
 
@@ -23,12 +21,10 @@ export default function MobilePanel({
 }) {
   const lines = product.tagline.split("\n");
   const isFirst = index === 0;
-  const topOffset = isFirst ? NAV_H : "0px";
 
+  // Tinggi setiap panel: jika aktif mengambil sisa layar (100% - 2 * var(--c)), jika tertutup mengambil var(--c)
   const height = isActive
-    ? `calc(100% - 2 * var(--c) - ${NAV_H})`
-    : isFirst
-    ? `calc(var(--c) + ${NAV_H})`
+    ? "calc(100% - 2 * var(--c))"
     : "var(--c)";
 
   const ease = "cubic-bezier(0.22, 1, 0.36, 1)";
@@ -89,8 +85,8 @@ export default function MobilePanel({
       <div
         className="absolute inset-x-0 bottom-0 z-20 flex flex-col px-6 pb-5"
         style={{
-          top: topOffset,
-          paddingTop: isFirst ? "4px" : "18px",
+          top: 0,
+          paddingTop: isFirst ? `calc(${NAV_H} + 4px)` : "18px",
           opacity: isActive ? 1 : 0,
           pointerEvents: isActive ? "auto" : "none",
           transition: `opacity ${isActive ? 400 : 120}ms ease ${

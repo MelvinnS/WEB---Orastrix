@@ -42,6 +42,9 @@ export default function ProductShowcase({ onBuy }) {
             onBuy={onBuy}
           />
         ))}
+
+        {/* Indikator scroll down pada tampilan mobile */}
+        <ScrollIndicator targetId="about" />
       </div>
     );
   }
@@ -65,9 +68,7 @@ export default function ProductShowcase({ onBuy }) {
       ))}
 
       {/* Indikator scroll down dengan bounce halus khusus desktop/tablet */}
-      <div>
-        <ScrollIndicator targetId="about" />
-      </div>
+      <ScrollIndicator targetId="about" />
     </div>
   );
 }
