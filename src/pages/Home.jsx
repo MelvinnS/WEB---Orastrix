@@ -1,12 +1,13 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import Navbar from "../components/Navbar";
 import ProductShowcase from "../components/ProductShowcase";
 import AboutSection from "../components/AboutSection";
 import ProductInteractive from "../components/ProductInteractive";
 import Footer from "../components/Footer";
-import useSmoothScroll from "../hooks/useSmoothScroll";
+import useSmoothScroll, { getLenis } from "../hooks/useSmoothScroll";
 import SplashScreen from "../components/SplashScreen/SplashScreen";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 export default function Home() {
   // Aktifkan smooth inertial scrolling via Lenis
@@ -14,6 +15,21 @@ export default function Home() {
 
   // State untuk splash screen loader
   const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  const handleSplashComplete = () => {
+    setIsLoading(false);
+    setTimeout(() => {
+      const lenis = getLenis();
+      if (lenis) {
+        lenis.resize();
+      }
+      ScrollTrigger.refresh();
+    }, 150);
+  };
 
   const handleBuy = (product) => {
     console.log("Buy:", product.id);
@@ -44,7 +60,7 @@ export default function Home() {
             }}
             className="fixed inset-0 z-50 pointer-events-auto"
           >
-            <SplashScreen onComplete={() => setIsLoading(false)} />
+            <SplashScreen onComplete={handleSplashComplete} />
           </motion.div>
         )}
       </AnimatePresence>
