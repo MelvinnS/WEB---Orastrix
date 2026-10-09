@@ -4,7 +4,7 @@ import { CONTACT_CONFIG } from "../../data/contact";
 const TOPIC_OPTIONS = [
   "Pertanyaan produk",
   "Pemesanan",
-  "Kerja sama",
+  "Layanan jasa Website",
   "Lainnya",
 ];
 
@@ -27,7 +27,7 @@ export default function ContactSection() {
   const waUrl = `https://wa.me/${CONTACT_CONFIG.whatsappNumber}?text=${waEncodedMsg}`;
   const igUrl =
     CONTACT_CONFIG.instagramUrl ||
-    `https://instagram.com/${CONTACT_CONFIG.instagramUsername}`;
+    `https://instagram.com/${CONTACT_CONFIG.el_falskie}`;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
