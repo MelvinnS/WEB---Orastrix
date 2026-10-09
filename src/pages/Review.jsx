@@ -40,10 +40,27 @@ export default function Review() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitting(true);
     setError("");
+
+    const cleanName = name.trim().replace(/\s+/g, " ");
+    const cleanComment = comment.trim();
+
+    if (cleanName.length < 2) {
+      setError("Nama minimal 2 karakter.");
+      return;
+    }
+    if (rating < 1 || rating > 5) {
+      setError("Pilih jumlah bintang terlebih dahulu (1 - 5 bintang).");
+      return;
+    }
+    if (cleanComment.length < 10) {
+      setError("Komentar minimal 10 karakter.");
+      return;
+    }
+
+    setSubmitting(true);
     try {
-      const res = await addReview({ name, rating, comment });
+      const res = await addReview({ name: cleanName, rating, comment: cleanComment });
       if (!res.ok) {
         setError(res.error);
         return;
@@ -218,7 +235,7 @@ export default function Review() {
             </div>
           ) : reviews.length === 0 ? (
             <div className="mt-8 rounded-2xl bg-white p-8 text-center border border-black/5 text-[#6B7280]">
-              Belum ada review yang disetujui. Jadilah yang pertama memberikan review!
+              Belum ada review. Jadilah yang pertama memberikan review!
             </div>
           ) : (
             <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">

@@ -36,7 +36,11 @@ export default function StarRating({ value = 0, onChange, size = "w-5 h-5", clas
             role="radio"
             aria-checked={value === n}
             aria-label={`${n} bintang`}
-            onClick={() => onChange(n)}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onChange(n);
+            }}
             onMouseEnter={() => setHover(n)}
             className="p-1 -m-0.5 rounded-md transition-transform hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1F4336]/40"
           >
