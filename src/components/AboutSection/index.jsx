@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import LeafIcon from "../icons/LeafIcon";
 import QuoteSection from "./QuoteSection";
+import StatsSection from "./StatsSection";
 import ScrollReveal from "../ScrollReveal";
 import TestimonialSection from "../Testimonials/TestimonialSection";
 
@@ -124,6 +125,9 @@ export default function AboutSection() {
 
           {/* Section Tambahan: Quote Banner Persis Referensi Gambar */}
           <QuoteSection />
+
+          {/* Section Presentase / Angka Statistik (dengan CountUp) */}
+          <StatsSection />
         </motion.div>
 
         {/* Section Testimoni (3 review pilihan admin) */}
