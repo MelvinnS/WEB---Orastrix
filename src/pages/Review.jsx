@@ -5,13 +5,12 @@ import Footer from "../components/Footer";
 import LeafIcon from "../components/icons/LeafIcon";
 import StarRating from "../components/Testimonials/StarRating";
 import ReviewCard from "../components/Testimonials/ReviewCard";
-import { addReview, getMyReview, getReviews } from "../lib/reviewStore";
+import { addReview, getReviews } from "../lib/reviewStore";
 
 const LABELS = ["", "Kurang", "Cukup", "Bagus", "Sangat bagus", "Luar biasa"];
 
 export default function Review() {
   const [reviews, setReviews] = useState([]);
-  const [mine, setMine] = useState(null);
   const [name, setName] = useState("");
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -23,9 +22,8 @@ export default function Review() {
   const refresh = async () => {
     setLoading(true);
     try {
-      const [all, userReview] = await Promise.all([getReviews(), getMyReview()]);
+      const all = await getReviews();
       setReviews(all);
-      setMine(userReview);
     } catch (err) {
       console.error("Gagal memuat data review:", err);
     } finally {
@@ -41,6 +39,7 @@ export default function Review() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setJustSent(false);
 
     const cleanName = name.trim().replace(/\s+/g, " ");
     const cleanComment = comment.trim();
@@ -65,6 +64,9 @@ export default function Review() {
         setError(res.error);
         return;
       }
+      setName("");
+      setRating(0);
+      setComment("");
       setJustSent(true);
       await refresh();
     } catch (err) {
@@ -115,102 +117,95 @@ export default function Review() {
             </span>
           </h1>
           <p className="max-w-xl text-xs sm:text-sm text-[#6B7280]">
-            Ceritakan bagaimana Orastrix menemani harimu. Setiap orang hanya dapat memberikan satu review.
+            Ceritakan bagaimana Orastrix menemani harimu.
           </p>
         </div>
 
         {/* Form Input Review & Summary Grid */}
         <section className="mt-8 sm:mt-10 grid gap-6 lg:grid-cols-5">
           <div className="lg:col-span-3 rounded-3xl bg-white p-6 sm:p-8 border border-black/5 shadow-[0_8px_30px_rgba(17,24,39,0.08)]">
-            {mine ? (
-              <div className="flex h-full flex-col items-center justify-center gap-3 py-6 text-center">
-                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#1F4336]/10 text-[#1F4336]">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2.6" viewBox="0 0 24 24">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
+              {justSent && (
+                <div role="status" className="rounded-xl bg-emerald-50 px-4 py-3 text-xs font-semibold text-emerald-800 border border-emerald-200 flex items-center gap-2">
+                  <svg className="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
-                </span>
-                <h2 className="text-lg sm:text-xl font-extrabold text-[#111827]">
-                  {justSent ? "Terima kasih atas review-mu!" : "Kamu sudah memberikan review"}
-                </h2>
-                <p className="max-w-sm text-xs sm:text-sm text-[#6B7280]">
-                  Review-mu sudah langsung diterbitkan dan dapat dilihat pada daftar review di bawah.
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
-                {/* Honeypot hidden input */}
+                  <span>Terima kasih! Review-mu telah berhasil diterbitkan dan bisa langsung dilihat di bawah.</span>
+                </div>
+              )}
+
+              {/* Honeypot hidden input */}
+              <input
+                type="text"
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+                className="hidden pointer-events-none"
+              />
+
+              <div>
+                <label htmlFor="rv-name" className="mb-1.5 block text-xs sm:text-sm font-bold text-[#111827]">
+                  Nama
+                </label>
                 <input
+                  id="rv-name"
                   type="text"
-                  name="website"
-                  tabIndex={-1}
-                  autoComplete="off"
-                  className="hidden pointer-events-none"
-                />
-
-                <div>
-                  <label htmlFor="rv-name" className="mb-1.5 block text-xs sm:text-sm font-bold text-[#111827]">
-                    Nama
-                  </label>
-                  <input
-                    id="rv-name"
-                    type="text"
-                    value={name}
-                    maxLength={40}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Nama kamu"
-                    autoComplete="name"
-                    disabled={submitting}
-                    className={inputCls}
-                  />
-                </div>
-
-                <div>
-                  <span className="mb-1.5 block text-xs sm:text-sm font-bold text-[#111827]">Bintang</span>
-                  <div className="flex items-center gap-3">
-                    <StarRating value={rating} onChange={setRating} size="w-7 h-7 sm:w-8 sm:h-8" />
-                    <span className="text-xs sm:text-sm font-semibold text-[#1F4336]">{LABELS[rating]}</span>
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="rv-comment" className="mb-1.5 block text-xs sm:text-sm font-bold text-[#111827]">
-                    Komentar
-                  </label>
-                  <textarea
-                    id="rv-comment"
-                    value={comment}
-                    maxLength={300}
-                    rows={4}
-                    onChange={(e) => setComment(e.target.value)}
-                    placeholder="Ceritakan pengalamanmu memakai Orastrix..."
-                    disabled={submitting}
-                    className={`${inputCls} resize-none`}
-                  />
-                  <p className="mt-1 text-right text-[11px] text-black/40">{comment.length}/300</p>
-                </div>
-
-                {error && (
-                  <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-xs font-medium text-red-700 border border-red-100">
-                    {error}
-                  </p>
-                )}
-
-                <button
-                  type="submit"
+                  value={name}
+                  maxLength={40}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Nama kamu"
+                  autoComplete="name"
                   disabled={submitting}
-                  className="self-start rounded-full bg-[#1F4336] px-8 py-3 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-[#1F4336]/25 transition-all duration-200 hover:bg-[#173326] hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none flex items-center gap-2"
-                >
-                  {submitting ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span>Mengirim...</span>
-                    </>
-                  ) : (
-                    <span>Kirim Review</span>
-                  )}
-                </button>
-              </form>
-            )}
+                  className={inputCls}
+                />
+              </div>
+
+              <div>
+                <span className="mb-1.5 block text-xs sm:text-sm font-bold text-[#111827]">Bintang</span>
+                <div className="flex items-center gap-3">
+                  <StarRating value={rating} onChange={setRating} size="w-7 h-7 sm:w-8 sm:h-8" />
+                  <span className="text-xs sm:text-sm font-semibold text-[#1F4336]">{LABELS[rating]}</span>
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="rv-comment" className="mb-1.5 block text-xs sm:text-sm font-bold text-[#111827]">
+                  Komentar
+                </label>
+                <textarea
+                  id="rv-comment"
+                  value={comment}
+                  maxLength={300}
+                  rows={4}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Ceritakan pengalamanmu memakai Orastrix..."
+                  disabled={submitting}
+                  className={`${inputCls} resize-none`}
+                />
+                <p className="mt-1 text-right text-[11px] text-black/40">{comment.length}/300</p>
+              </div>
+
+              {error && (
+                <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-xs font-medium text-red-700 border border-red-100">
+                  {error}
+                </p>
+              )}
+
+              <button
+                type="submit"
+                disabled={submitting}
+                className="self-start rounded-full bg-[#1F4336] px-8 py-3 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-[#1F4336]/25 transition-all duration-200 hover:bg-[#173326] hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none flex items-center gap-2"
+              >
+                {submitting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span>Mengirim...</span>
+                  </>
+                ) : (
+                  <span>Kirim Review</span>
+                )}
+              </button>
+            </form>
           </div>
 
           {/* Ringkasan rating */}
@@ -247,7 +242,7 @@ export default function Review() {
             /* Grid 2 Kolom di Mobile, 4 Kolom di Desktop */
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 lg:gap-6">
               {reviews.map((r) => (
-                <ReviewCard key={r.id} review={r} highlight={mine?.id === r.id} />
+                <ReviewCard key={r.id} review={r} />
               ))}
             </div>
           )}
