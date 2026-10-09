@@ -50,29 +50,6 @@ export default async function handler(req, res) {
       const ip = getClientIp(req);
       const ipHash = hashIp(ip);
 
-      // Check 1: Device ID restriction
-      const deviceCheck = await sql`
-        SELECT COUNT(*)::int as count FROM reviews WHERE device_id = ${deviceId}
-      `;
-      if (deviceCheck[0]?.count > 0) {
-        return res.status(400).json({
-          ok: false,
-          error: "Kamu sudah pernah memberikan review dari perangkat ini.",
-        });
-      }
-
-      // Check 2: IP Hash restriction (1 review per ip_hash per 24 hours)
-      const ipCheck = await sql`
-        SELECT COUNT(*)::int as count FROM reviews
-        WHERE ip_hash = ${ipHash} AND created_at > NOW() - INTERVAL '24 hours'
-      `;
-      if (ipCheck[0]?.count > 0) {
-        return res.status(400).json({
-          ok: false,
-          error: "Kamu sudah memberikan review dalam 24 jam terakhir dari jaringan ini.",
-        });
-      }
-
       const id = `r-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
       const inserted = await sql`
         INSERT INTO reviews (id, name, rating, comment, created_at, approved, featured, device_id, ip_hash)

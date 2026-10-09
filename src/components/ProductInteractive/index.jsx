@@ -54,12 +54,12 @@ const VARIANTS = [
 
 // Animation variants for the image swap
 const imageVariants = {
-  packEnter: { opacity: 0, y: -60, scale: 0.9 },
+  packEnter: { opacity: 0, y: -50, scale: 0.9 },
   packAnimate: { opacity: 1, y: 0, scale: 1, rotate: -12 },
-  packExit: { opacity: 0, y: 80, scale: 0.85, rotate: -4 },
-  tabletEnter: { opacity: 0, y: -80, scale: 0.85 },
-  tabletAnimate: { opacity: 1, y: 0, scale: 1 },
-  tabletExit: { opacity: 0, y: 80, scale: 0.85 },
+  packExit: { opacity: 0, y: 50, scale: 0.85, rotate: -4 },
+  tabletEnter: { opacity: 0, y: -50, scale: 0.85 },
+  tabletAnimate: { opacity: 1, y: 0, scale: 1, rotate: 0 },
+  tabletExit: { opacity: 0, y: 50, scale: 0.85, rotate: 0 },
 };
 
 export default function ProductInteractive({ onBuy }) {
@@ -125,7 +125,7 @@ export default function ProductInteractive({ onBuy }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="text-xs sm:text-sm text-white/85 leading-relaxed max-w-sm mx-auto lg:mx-0 font-normal"
+              className="text-xs sm:text-sm text-white/85 leading-relaxed max-w-sm mx-auto lg:mx-0 font-normal min-h-[60px]"
             >
               {currentVariant.description}
             </motion.p>
@@ -176,8 +176,8 @@ export default function ProductInteractive({ onBuy }) {
             </button>
           </div>
 
-          {/* Gambar Produk dengan AnimatePresence untuk swap animasi */}
-          <div className="relative flex items-center justify-center" style={{ minHeight: "260px" }}>
+          {/* Gambar Produk dengan container berketinggian tetap & absolute positioning agar tidak terjadi layout shift */}
+          <div className="relative flex items-center justify-center w-full h-[240px] sm:h-[320px] md:h-[380px] lg:h-[440px] xl:h-[480px] pointer-events-none">
             <AnimatePresence mode="wait">
               <motion.img
                 key={imageKey}
@@ -199,13 +199,13 @@ export default function ProductInteractive({ onBuy }) {
                     : imageVariants.tabletExit
                 }
                 transition={{
-                  duration: 0.5,
+                  duration: 0.35,
                   ease: [0.22, 1, 0.36, 1],
                 }}
-                className={`object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.5)] max-w-none ${
+                className={`absolute object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.5)] max-w-none ${
                   isPack
-                    ? "w-[220px] sm:w-[300px] md:w-[380px] lg:w-[440px] xl:w-[480px]"
-                    : "w-[200px] sm:w-[280px] md:w-[340px] lg:w-[380px] xl:w-[420px]"
+                    ? "w-[220px] sm:w-[300px] md:w-[380px] lg:w-[440px] xl:w-[480px] h-[220px] sm:h-[300px] md:h-[380px] lg:h-[440px] xl:h-[480px]"
+                    : "w-[200px] sm:w-[280px] md:w-[340px] lg:w-[380px] xl:w-[420px] h-[200px] sm:h-[280px] md:h-[340px] lg:h-[380px] xl:h-[420px]"
                 }`}
                 loading="eager"
               />
